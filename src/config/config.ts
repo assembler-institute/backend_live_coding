@@ -8,14 +8,10 @@ type TConfig = {
 
 type EnvironmentConfig = {
     app: AppConfig;
-    db: MongoDBConfig;
+
 };
 type AppConfig = {
     PORT: string | number;
-};
-
-type MongoDBConfig = {
-    URI: string;
 };
 
 
@@ -26,17 +22,11 @@ const CONFIG: TConfig = {
         app: {
             PORT: process.env.PORT || 4001
         },
-        db: {
-            URI: process.env.MONGO_DB_URI || 'mongodb://localhost:27017/test_development'
-        }
 
     },
     production: {
         app: {
             PORT: process.env.PORT || 4002
-        },
-        db: {
-            URI: process.env.MONGO_DB_URI || 'mongodb://localhost:27017/test_production'
         }
     }
 }
