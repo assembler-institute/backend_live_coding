@@ -13,7 +13,7 @@ export const createUser = async (req: Request, res: Response) => {
         }
 
         // @ts-ignore
-        const newUser: UserCreateArgs = await client.user.create({
+        const newUser = await client.user.create({
             data: {
                 name,
                 email,
