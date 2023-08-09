@@ -1,8 +1,8 @@
 import express, {Express} from 'express';
 import morgan from "morgan";
-import MoviesRouter from "@routes/movies.routes";
-import UserRouter from "@routes/user.routes";
-import GenreRouter from "@routes/genres.routes";
+import UserRouter from "./routes/user.routes";
+import MoviesRouter from "./routes/movies.routes";
+import GenreRouter from "./routes/genres.routes";
 
 
 const app: Express = express();

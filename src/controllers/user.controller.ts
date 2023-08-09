@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
-import prisma from "../db/client";
-import UserModel from "../model/user.model";
+import client from "../db/client";
+import {convertToType} from "../helpers/utils";
 
 export const createUser = async (req: Request, res: Response) => {
     const {name, email, password} = req.body;
@@ -12,7 +12,8 @@ export const createUser = async (req: Request, res: Response) => {
             return;
         }
 
-        const newUser = await prisma.user.create({
+        // @ts-ignore
+        const newUser: UserCreateArgs = await client.user.create({
             data: {
                 name,
                 email,
@@ -30,8 +31,8 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
-
-        const allUsers = await prisma.user.findMany()
+        // @ts-ignore
+        const allUsers = await client.user.findMany()
 
         res.status(201).json(allUsers);
 
@@ -42,11 +43,12 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 export const getUserById = async (req: Request, res: Response) => {
     const {userId} = req.params;
-    try {
 
-        const user = await prisma.user.findUnique({
+    try {
+        // @ts-ignore
+        const user = await client.user.findUnique({
             where: {
-                id: userId
+                id: convertToType(userId)
             },
             include: {
                 movies: {
@@ -55,6 +57,7 @@ export const getUserById = async (req: Request, res: Response) => {
                     }
                 }
             }
+
 
         })
         console.log(user)
@@ -65,32 +68,17 @@ export const getUserById = async (req: Request, res: Response) => {
     }
 }
 
-export const getUserByIdMongoose = async (req: Request, res: Response) => {
-    const {userId} = req.params;
-    try {
-
-        const user = await UserModel.findById(userId).populate({
-            path: "movies",
-            populate: {
-                path: "genres"
-            }
-        })
-
-        res.status(201).json(user);
-    } catch (error) {
-        console.log(error)
-        res.status(500).json(error);
-    }
-}
 
 export const updateUserName = async (req: Request, res: Response) => {
     const {userId} = req.params;
     const {name, email} = req.body;
-    try {
 
-        const user = await prisma.user.update({
+    console.log(userId, name, email)
+    try {
+        // @ts-ignore
+        const user = await client.user.update({
             where: {
-                id: userId
+                id: convertToType(userId)
             },
             data: {
                 name,
@@ -107,10 +95,10 @@ export const updateUserName = async (req: Request, res: Response) => {
 export const deleteUserByID = async (req: Request, res: Response) => {
     const {userId} = req.params;
     try {
-
-        await prisma.user.delete({
+        // @ts-ignore
+        await client.user.delete({
             where: {
-                id: userId
+                id: convertToType(userId)
             }
         })
 

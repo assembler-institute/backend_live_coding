@@ -1,13 +1,13 @@
 import {Request, Response} from "express";
-import prisma from "../db/client";
+import client from "../db/client";
 
 
 export const createGenre = async (req: Request, res: Response) => {
     const {name} = req.body
 
     try {
-
-        const newGenre = await prisma.genres.create({
+        // @ts-ignore
+        const newGenre = await client.genres.create({
             data: {
                 name
             }
@@ -24,8 +24,8 @@ export const createGenre = async (req: Request, res: Response) => {
 export const getAllGenres = async (req: Request, res: Response) => {
 
     try {
-
-        const allGenres = await prisma.genres.findMany()
+        // @ts-ignore
+        const allGenres = await client.genres.findMany()
 
 
         res.status(201).send(allGenres)

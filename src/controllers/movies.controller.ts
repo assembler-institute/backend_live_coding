@@ -1,25 +1,23 @@
 import {Request, Response} from 'express';
-import prisma from "../db/client";
-import MoviesModel from "../model/movies.model";
-import UserModel from "../model/user.model";
+import client from "../db/client";
+import {convertToType} from "../helpers/utils";
 
 
 export const createMovie = async (req: Request, res: Response) => {
-    const {title, year, genres} = req.body
+    const {title, genres} = req.body
     const {userID} = req.params
-    console.log(genres)
-    try {
 
-        const newMovie = await prisma.movies.create({
+    try {
+        // @ts-ignore
+        const newMovie = await client.movies.create({
             data: {
                 title,
-                year,
                 genres: {
-                    connect: genres.map((genre: string) => ({id: genre}))
+                    connect: genres.map((genre: string) => ({id: convertToType(genre)}))
                 },
                 User: {
                     connect: {
-                        id: userID
+                        id: convertToType(userID)
                     }
                 },
             }
@@ -34,45 +32,16 @@ export const createMovie = async (req: Request, res: Response) => {
     }
 }
 
-export const createMovieMongoose = async (req: Request, res: Response) => {
-    const {name, genre} = req.body
-    const {userID} = req.params
-
-    try {
-
-        const newMovie = await MoviesModel.create({
-            name,
-        })
-
-        if (newMovie.genres) {
-            newMovie.genres.push(genre)
-        }
-
-        await newMovie.save()
-
-        await UserModel.findByIdAndUpdate({_id: userID}, {
-            $push: {
-                movies: newMovie._id
-            }
-        }, {new: true})
-
-
-        res.status(201).send(newMovie)
-
-    } catch (error) {
-        res.status(500).send(error)
-    }
-}
 
 export const removeMovieByID = async (req: Request, res: Response) => {
 
     const {ID} = req.params
 
     try {
-
-        await prisma.movies.delete({
+        // @ts-ignore
+        await client.movies.delete({
             where: {
-                id: ID
+                id: convertToType(ID)
             }
         })
 
@@ -88,12 +57,11 @@ export const removeMovieByID = async (req: Request, res: Response) => {
 export const getAllMovies = async (req: Request, res: Response) => {
 
     try {
-
-        const movies = await prisma.movies.findMany({
+        // @ts-ignore
+        const movies = await client.movies.findMany({
             select: {
                 id: true,
                 title: true,
-                year: true,
             }
         })
 
@@ -105,17 +73,18 @@ export const getAllMovies = async (req: Request, res: Response) => {
 
 
 }
+
 export const getMovieByID = async (req: Request, res: Response) => {
     const {ID} = req.params
     try {
-
-        const movies = await prisma.movies.findUnique({
+        // @ts-ignore
+        const movies = await client.movies.findUnique({
             where: {
-                id: ID
+                id: convertToType(ID)
             },
-            include: {
-                genres: true
-            }
+            // include: {
+            //     genres: true
+            // }
         })
 
 
